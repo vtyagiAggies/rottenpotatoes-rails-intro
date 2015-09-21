@@ -11,11 +11,17 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if(params[:sort_by] == nil)
-    	@movies = Movie.all
+    @all_ratings = Movie.ratings
+    @sort_by = params[:sort_by ]
+    if(params[:ratings] == nil)
+	@selected_ratings = @all_ratings
     else
-    	@movies = Movie.order(params[:sort_by])
-    	@sort_by = params[:sort_by]		 #Variable which tells view, which header need to be colored
+	@selected_ratings = params[:ratings].keys
+    end
+    if(@sort_by != nil)
+	@movies = Movie.where(:rating =>@selected_ratings).order(@sort_by)
+    else
+	@movies = Movie.where(:rating =>@selected_ratings)
     end
   end
 
