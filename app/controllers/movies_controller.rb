@@ -11,7 +11,9 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.ratings
+    @all_ratings = Movie.ratings  
+    @movies = Movie.all
+
     if(params[:ratings] != nil || params[:sort_by] != nil)  #If parameter exist assign them to session
 	session[:saved_params] = session[:saved_params].present? ? session[:saved_params] : {}
 	if (params[:sort_by] != nil && params[:sort_by].length != 0)
@@ -27,6 +29,7 @@ class MoviesController < ApplicationController
 	redirect_to movies_path + '?' + session[:saved_params].to_query
     end
 
+    
     if(session[:saved_params])
     	@selected_ratings = (session[:saved_params][:ratings].present? ? session[:saved_params][:ratings].keys : @all_ratings)
         @sort_by = session[:saved_params][:sort_by] ? session[:saved_params][:sort_by] : ''
