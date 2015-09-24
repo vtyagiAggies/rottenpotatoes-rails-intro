@@ -13,11 +13,14 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.ratings  
     @movies = Movie.all
+    @sort_by = params[:sort_by]
+    if(@sort_by != nil)
+	session[:sort_by] = @sort_by
+    end
 
     if(params[:ratings] == nil && params[:sort_by] == nil && session[:saved_params] == nil )
 	@movies = Movie.all
 	@selected_ratings = @all_ratings
-	@sort_by = ''
     end
     if(params[:ratings] != nil || params[:sort_by] != nil)  #If parameter exist assign them to session
 	session[:saved_params] = session[:saved_params].present? ? session[:saved_params] : {}
@@ -37,12 +40,19 @@ class MoviesController < ApplicationController
     
     if(session[:saved_params])
     	@selected_ratings = (session[:saved_params][:ratings].present? ? session[:saved_params][:ratings].keys : @all_ratings)
-        @sort_by = session[:saved_params][:sort_by] ? session[:saved_params][:sort_by] : ''
-   	@movies = Movie.where(:rating =>@selected_ratings).order(@sort_by)
+	if(@sort_by == nil)
+		@sort_by = session[:saved_params][:sort_by] ? session[:saved_params][:sort_by] : params[:sort_by]
+	end
+    else
+	@selected_ratings = @all_ratings
+        @sort_by = params[:sort_by]
+    end
+
+    @sort_by = session[:sort_by]
+    if(@sort_by != nil)
+	@movies = Movie.where(:rating =>@selected_ratings).order(@sort_by)
     else
 	@movies = Movie.where(:rating =>@selected_ratings)
-	@selected_ratings = @all_ratings
-        @sort_by = ''
     end
   end
 
