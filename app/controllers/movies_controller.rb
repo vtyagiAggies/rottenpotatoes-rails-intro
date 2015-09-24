@@ -14,6 +14,11 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.ratings  
     @movies = Movie.all
 
+    if(params[:ratings] == nil && params[:sort_by] == nil && session[:saved_params] == nil )
+	@movies = Movie.all
+	@selected_ratings = @all_ratings
+	@sort_by = ''
+    end
     if(params[:ratings] != nil || params[:sort_by] != nil)  #If parameter exist assign them to session
 	session[:saved_params] = session[:saved_params].present? ? session[:saved_params] : {}
 	if (params[:sort_by] != nil && params[:sort_by].length != 0)
